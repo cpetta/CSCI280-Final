@@ -588,5 +588,23 @@ namespace Chess
                 Math.Abs(b.Grid[m.to.number + step][m.to.letter].lastPosition.number - (m.to.number + step)) == 2 //jumped from last position
                 );
         }
+
+        public static List<move_t> GetMoves(ChessBoard b, Player player)
+        {
+            List<move_t> potentialMoves = new List<move_t>();
+
+            var moves = getPlayerMoves(b, player);
+
+            foreach (position_t piece in moves.Keys)
+            {
+                foreach (position_t move in moves[piece])
+                {
+                    move_t someMove = new move_t(piece, move);
+                    potentialMoves.Add(someMove);
+                }
+            }
+
+            return potentialMoves;
+        }
     }
 }
