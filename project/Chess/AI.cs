@@ -33,5 +33,35 @@ namespace Chess
         {
             //TBD: implementation of alpha-beta pruning.
         }
+        private static Tree BuildTree(ChessBoard chessBoard, Player player, int depth)
+        {
+            Tree root = new Tree(chessBoard, player);
+            List<ChessBoard> children = getNextChessBoards(chessBoard, player);
+            foreach (ChessBoard child in children)
+            {
+                if (depth > 0)
+                {
+                    Player otherPlayer = player == Player.BLACK ? Player.WHITE : Player.BLACK;
+                    Tree childTree = new Tree(child, otherPlayer);
+                    root.addChild(childTree);
+                    depth--;
+                    BuildTree(child, otherPlayer, depth);
+                }
+            }
+            return root;
+        }
+
+        private static List<ChessBoard> getNextChessBoards(ChessBoard board, Player player)
+        {
+            List<ChessBoard> chessBoards = new List<ChessBoard>();
+            List<move_t> moves = LegalMoveSet.GetMoves(board, player);
+            foreach (move_t move in moves)
+            {
+                ChessBoard newBoard = LegalMoveSet.move(board, move);
+                chessBoards.Add(newBoard);
+            }
+            return chessBoards;
+        }
+
     }
 }
