@@ -1,4 +1,7 @@
-﻿namespace Chess
+﻿using System.Collections;
+using System.Collections.Generic;
+
+namespace Chess
 {
     public enum Piece
     {
@@ -70,5 +73,36 @@
             this.from = from;
             this.to = to;
         }
+    }
+    internal class Tree : IEnumerable
+    {
+        public ChessBoard Board;
+        public Player PlayerTurn;
+        public int Fitness;
+
+        public Tree Parrent;
+        public List<Tree> children = new List<Tree>();
+        public Tree(ChessBoard b, Player turn)
+        {
+            Board = b;
+            PlayerTurn = turn;
+        }
+        public void addChild(Tree b)
+        {
+            children.Add(b);
+            b.Parrent = this;
+        }
+        public void setParrent(Tree p)
+        {
+            Parrent = p;
+            p.children.Add(this);
+        }
+        public IEnumerable<object> Children
+        {
+            get { return children; }
+        }
+
+        public bool isLeaf { get => children.Count == 0; }
+        public IEnumerator GetEnumerator() => Children.GetEnumerator();
     }
 }
