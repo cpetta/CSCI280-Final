@@ -37,7 +37,7 @@ namespace Chess
                 t.Fitness = int.MaxValue;
                 foreach (Tree child in t.children)
                 {
-                    t.Fitness = Math.Max(t.Fitness, MiniMax(child, Player.BLACK, depth).Fitness);
+                    t.Fitness = Math.Min(t.Fitness, MiniMax(child, Player.BLACK, depth).Fitness);
                 }
             }
             return t;
@@ -52,10 +52,10 @@ namespace Chess
             Tree root = new Tree(board, turn);
             root = BuildTree(root, turn, DEPTH);
             Tree moveTree = MiniMax(root, turn, DEPTH);
-            move_t bestMove = new move_t();
+            move_t bestMove = new move_t(new position_t(-1, -1), new position_t(-1, -1));
             foreach (Tree child in moveTree)
             {
-                if(moveTree.Fitness < child.Fitness)
+                if(moveTree.Fitness <= child.Fitness)
                 bestMove = child.move;
             }
             return bestMove;
@@ -75,13 +75,15 @@ namespace Chess
         //}
         private static Tree BuildTree(Tree chessBoard, Player player, int depth)
         {
-            List<Tree> children = getNextChessBoards(chessBoard, player);
             if (depth > 0)
+            {
+                List<Tree> children = getNextChessBoards(chessBoard, player);
                 foreach (Tree child in children)
                 {
                     chessBoard.addChild(child);
-                    BuildTree(child, child.PlayerTurn, depth--);
+                    BuildTree(child, child.PlayerTurn, depth - 1);
                 }
+            }
             return chessBoard;
         }
 
