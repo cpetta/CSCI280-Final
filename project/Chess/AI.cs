@@ -8,7 +8,7 @@ namespace Chess
 {
     public class AI
     {
-        public static int DEPTH = 2;
+        public static int DEPTH = 1;
         public static bool RUNNING = false;
         public static bool STOP = false;
         private static Player MAX = Player.BLACK;
@@ -55,7 +55,7 @@ namespace Chess
             move_t bestMove = new move_t();
             foreach (Tree child in moveTree)
             {
-                if(moveTree.Fitness == child.Fitness)
+                if(moveTree.Fitness < child.Fitness)
                 bestMove = child.move;
             }
             return bestMove;
@@ -76,15 +76,12 @@ namespace Chess
         private static Tree BuildTree(Tree chessBoard, Player player, int depth)
         {
             List<Tree> children = getNextChessBoards(chessBoard, player);
-            foreach (Tree child in children)
-            {
-                if (depth > 0)
+            if (depth > 0)
+                foreach (Tree child in children)
                 {
                     chessBoard.addChild(child);
-                    depth--;
-                    BuildTree(child, child.PlayerTurn, depth);
+                    BuildTree(child, child.PlayerTurn, depth--);
                 }
-            }
             return chessBoard;
         }
 
