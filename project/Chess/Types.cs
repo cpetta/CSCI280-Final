@@ -74,9 +74,10 @@ namespace Chess
             this.to = to;
         }
     }
-    internal class Tree : IEnumerable
+    public class Tree : IEnumerable
     {
         public ChessBoard Board;
+        public move_t move = new move_t();
         public Player PlayerTurn;
         public int Fitness;
 
