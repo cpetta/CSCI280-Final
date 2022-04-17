@@ -52,29 +52,12 @@ namespace Chess
             STOP = false; // no interupt command sent
             MAX = turn; // who is maximizing
             MIN = MAX == Player.BLACK ? Player.WHITE : Player.BLACK;
+
             Tree root = new Tree(board, turn);
             root = BuildTree(root, turn, DEPTH);
             Tree moveTree = MiniMax(root, turn, DEPTH);
-            move_t nullmove = new move_t(new position_t(-1, -1), new position_t(-1, -1));
-            move_t bestMove = nullmove;
-            foreach (Tree child in moveTree)
-            {
-                if (!PreviousMoves.Contains(child.move))
-                    if (moveTree.Fitness <= child.Fitness)
-                        bestMove = child.move;
-            }
-            if (PreviousMoves.Count > 10)
-                PreviousMoves.Dequeue();
-            PreviousMoves.Enqueue(bestMove);
 
-            if (bestMove.Equals(nullmove))
-            {
-                Random rnd = new Random();
-                int i = rnd.Next(0, moveTree.children.Count);
-                bestMove = moveTree.children[i].move;
-            }
-                
-            return bestMove;
+            return SelectMove(moveTree);
         }
 
         //private static int mimaab(ChessBoard board, Player turn, int depth, int alpha, int beta)
@@ -110,5 +93,28 @@ namespace Chess
             return chessBoards;
         }
 
+        private static move_t SelectMove(Tree moveTree)
+        {
+            move_t nullmove = new move_t(new position_t(-1, -1), new position_t(-1, -1));
+            move_t bestMove = nullmove;
+            foreach (Tree child in moveTree)
+            {
+                if (!PreviousMoves.Contains(child.move))
+                    if (moveTree.Fitness <= child.Fitness)
+                        bestMove = child.move;
+            }
+            if (PreviousMoves.Count > 10)
+                PreviousMoves.Dequeue();
+            PreviousMoves.Enqueue(bestMove);
+
+            if (bestMove.Equals(nullmove))
+            {
+                Random rnd = new Random();
+                int i = rnd.Next(0, moveTree.children.Count);
+                bestMove = moveTree.children[i].move;
+            }
+
+            return bestMove;
+        }
     }
 }
