@@ -17,7 +17,6 @@ namespace Chess
 
         public static Tree MiniMax(Tree t, Player player, int depth)
         {
-
             // If the game is over either because there's a winner or there are no more empty spaces.
             if (depth == 0 || LegalMoveSet.isCheck(t.Board, player))
             {
@@ -45,6 +44,41 @@ namespace Chess
             }
             return t;
         }
+        public static Tree AlphaBetaPruning(Tree t, Player player, int depth, int a = int.MinValue, int b = int.MaxValue)
+        {
+            // If the game is over either because there's a winner or there are no more empty spaces.
+            if (depth == 0 || LegalMoveSet.isCheck(t.Board, player))
+            {
+                t.Fitness = t.Board.fitness(player);
+                return t;
+            }
+
+            depth--;
+
+            if (player == MAX)
+            {
+                t.Fitness = int.MinValue;
+                foreach (Tree child in t.children)
+                {
+                    t.Fitness = Math.Max(t.Fitness, AlphaBetaPruning(child, MIN, depth, a, b).Fitness);
+                    if (t.Fitness > b)
+                        break;
+                    a = Math.Max(a, t.Fitness);
+                }
+            }
+            else
+            {
+                t.Fitness = int.MaxValue;
+                foreach (Tree child in t.children)
+                {
+                    t.Fitness = Math.Min(t.Fitness, AlphaBetaPruning(child, MAX, depth, a, b).Fitness);
+                    if (t.Fitness < a)
+                        break;
+                    b = Math.Min(b, t.Fitness);
+                }
+            }
+            return t;
+        }
 
         public static move_t MiniMaxAB(ChessBoard board, Player turn)
         {
@@ -55,15 +89,12 @@ namespace Chess
 
             Tree root = new Tree(board, turn);
             root = BuildTree(root, turn, DEPTH);
-            Tree moveTree = MiniMax(root, turn, DEPTH);
+
+            Tree moveTree = AlphaBetaPruning(root, turn, DEPTH);
+            //Tree moveTree = MiniMax(root, turn, DEPTH);
 
             return SelectMove(moveTree);
         }
-
-        //private static int mimaab(ChessBoard board, Player turn, int depth, int alpha, int beta)
-        //{
-            //TBD: implementation of alpha-beta pruning.
-        //}
         private static Tree BuildTree(Tree chessBoard, Player player, int depth)
         {
             if (depth > 0)
