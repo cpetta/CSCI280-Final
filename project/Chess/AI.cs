@@ -12,9 +12,12 @@ namespace Chess
         public static bool RUNNING = false;
         public static bool STOP = false;
         private static Player MAX = Player.BLACK;
+        private static Player MIN = MAX == Player.BLACK ? Player.WHITE : Player.BLACK;
+        private static Queue<move_t> PreviousMoves = new Queue<move_t>();
 
         public static Tree MiniMax(Tree t, Player player, int depth)
         {
+
             // If the game is over either because there's a winner or there are no more empty spaces.
             if (depth == 0)
             {
@@ -29,7 +32,7 @@ namespace Chess
                 t.Fitness = int.MinValue;
                 foreach (Tree child in t.children)
                 {
-                    t.Fitness = Math.Max(t.Fitness, MiniMax(child, Player.WHITE, depth).Fitness);
+                    t.Fitness = Math.Max(t.Fitness, MiniMax(child, MIN, depth).Fitness);
                 }
             }
             else
@@ -37,7 +40,7 @@ namespace Chess
                 t.Fitness = int.MaxValue;
                 foreach (Tree child in t.children)
                 {
-                    t.Fitness = Math.Min(t.Fitness, MiniMax(child, Player.BLACK, depth).Fitness);
+                    t.Fitness = Math.Min(t.Fitness, MiniMax(child, MAX, depth).Fitness);
                 }
             }
             return t;
@@ -55,9 +58,13 @@ namespace Chess
             move_t bestMove = new move_t(new position_t(-1, -1), new position_t(-1, -1));
             foreach (Tree child in moveTree)
             {
-                if(moveTree.Fitness <= child.Fitness)
-                bestMove = child.move;
+                if (!PreviousMoves.Contains(child.move))
+                    if (moveTree.Fitness <= child.Fitness)
+                        bestMove = child.move;
             }
+            if (PreviousMoves.Count > 10)
+                PreviousMoves.Dequeue();
+            PreviousMoves.Enqueue(bestMove);
             return bestMove;
             //TBD: gather all possible moves;
             //storing best result from each round;
