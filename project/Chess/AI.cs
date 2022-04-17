@@ -75,14 +75,6 @@ namespace Chess
             }
                 
             return bestMove;
-            //TBD: gather all possible moves;
-            //storing best result from each round;
-            //ForEach implements recursion logic;
-            //decide the best move.           
-
-         
-
-            
         }
 
         //private static int mimaab(ChessBoard board, Player turn, int depth, int alpha, int beta)
