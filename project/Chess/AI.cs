@@ -55,7 +55,8 @@ namespace Chess
             Tree root = new Tree(board, turn);
             root = BuildTree(root, turn, DEPTH);
             Tree moveTree = MiniMax(root, turn, DEPTH);
-            move_t bestMove = new move_t(new position_t(-1, -1), new position_t(-1, -1));
+            move_t nullmove = new move_t(new position_t(-1, -1), new position_t(-1, -1));
+            move_t bestMove = nullmove;
             foreach (Tree child in moveTree)
             {
                 if (!PreviousMoves.Contains(child.move))
@@ -65,6 +66,14 @@ namespace Chess
             if (PreviousMoves.Count > 10)
                 PreviousMoves.Dequeue();
             PreviousMoves.Enqueue(bestMove);
+
+            if (bestMove.Equals(nullmove))
+            {
+                Random rnd = new Random();
+                int i = rnd.Next(0, moveTree.children.Count);
+                bestMove = moveTree.children[i].move;
+            }
+                
             return bestMove;
             //TBD: gather all possible moves;
             //storing best result from each round;
