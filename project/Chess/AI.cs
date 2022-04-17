@@ -12,7 +12,7 @@ namespace Chess
         public static bool RUNNING = false;
         public static bool STOP = false;
         private static Player MAX = Player.BLACK;
-        private static Player MIN = MAX == Player.BLACK ? Player.WHITE : Player.BLACK;
+        private static Player MIN =Player.WHITE;
         private static Queue<move_t> PreviousMoves = new Queue<move_t>();
 
         public static Tree MiniMax(Tree t, Player player, int depth)
@@ -51,7 +51,7 @@ namespace Chess
             RUNNING = true; // we've started running
             STOP = false; // no interupt command sent
             MAX = turn; // who is maximizing
-
+            MIN = MAX == Player.BLACK ? Player.WHITE : Player.BLACK;
             Tree root = new Tree(board, turn);
             root = BuildTree(root, turn, DEPTH);
             Tree moveTree = MiniMax(root, turn, DEPTH);
