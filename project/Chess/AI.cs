@@ -42,9 +42,9 @@ namespace Chess
         public static Tree AlphaBetaPruning(Tree t, Player player, int depth, int a = int.MinValue, int b = int.MaxValue)
         {
             // If the game is over either because there's a winner or there are no more empty spaces.
-            if (depth == 0 || LegalMoveSet.isCheck(t.Board, player))
+            if (depth <= 0)
             {
-                t.Fitness = t.Board.fitness(player);
+                t.Fitness = t.Board.fitness(MAX);
                 return t;
             }
 
